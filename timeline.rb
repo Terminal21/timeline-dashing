@@ -23,43 +23,63 @@ def gen_color()
   return colorname[random.rand(9)]
 end
 
+# Diese Funktion spaltet ein übergebenes Nokogiri-Dokument nach 'br'
+def split_doc_br(doc)
+  doc_snippet = Array.new
+  doc.each do |element|
+    if element.name == 'br'
+      yield doc_snippet
+      doc_snipped = Array.new
+    else
+      doc_snippet.push(element)
+  end
+end
+
+# Diese Funktion spaltet ein übergebenes Nokogiri-Dokument zunächst nach dem
+# ersten ',' in zwei Teile und verwirft den ersten Teil. Dann wird der Rest
+# durch die ersten zwei '.' in 3 Teile geteilt.
+def parse_event(doc)
+  doc.to_s.split(',', 2)[-1].split('.', 3)[0..1].map{ |s| s.to_i }
+  # To Be Continued
+end
+
 # Print out the yml event list
 def print_event_yml()
   # Parse the event container <aside><div><p>...</p></div></aside>
   # to get the orga dates and names
-  doc = fetch_html()
-  doc.xpath('//aside//div//p').each do |events_chunk|
+  allevents = fetch_html()
+  allevents.xpath('//aside//div//p').each do |events_chunk|
 
-    # Split array in cohensive elements at once
-    elements = events_chunk.content.split(/\,\ |\.\ |\n/)
+  #  # Split array in cohensive elements at once
+  #  elements = events_chunk.content.split(/\,\ |\.\ |\n/)
 
-    # Puts warning
-    elements_yml = "# Do not edit this list manually, it will be overwritten\n"
-    elements_yml = elements_yml + "# in a couple of hours anyway!\n\n"
+  #  # Puts warning
+  #  elements_yml = "# Do not edit this list manually, it will be overwritten\n"
+  #  elements_yml = elements_yml + "# in a couple of hours anyway!\n\n"
 
-    elements_yml = elements_yml + "events:\n"
-    i = 0
+  #  elements_yml = elements_yml + "events:\n"
+  #  i = 0
 
-    until i >= elements.length do
-      if i != nil and elements[i +3] != nil then
-        # Puts all event names out of elements
-        elements_yml = elements_yml + "  - name: \"" + elements[i + 3] + "\"\n"
-      end
-      if i != nil then
-        # Puts all event dates out of elements
-        puts elements[i + 2] + ":" + elements[i + 1]
-        begin
-          elements_yml = elements_yml + Date.new(2018,elements[i + 2].to_i,elements[i + 1].to_i).strftime("    date: \"%b %d, %Y\"\n")
-        rescue ArgumentError
-        end
-      end
-      if i != nil then
-        # Puts all event background colors
-        elements_yml = elements_yml + "    background: \"" + gen_color() + "\"\n"
-      end
-      i += 4;
-    end
-    return elements_yml
+  #  until i >= elements.length do
+  #    if i != nil and elements[i +3] != nil then
+  #      # Puts all event names out of elements
+  #      elements_yml = elements_yml + "  - name: \"" + elements[i + 3] + "\"\n"
+  #    end
+  #    if i != nil then
+  #      # Puts all event dates out of elements
+  #      puts elements[i + 2] + ":" + elements[i + 1]
+  #      begin
+  #        elements_yml = elements_yml + Date.new(2018,elements[i + 2].to_i,elements[i + 1].to_i).strftime("    date: \"%b %d, %Y\"\n")
+  #      rescue ArgumentError
+  #      end
+  #    end
+  #    if i != nil then
+  #      # Puts all event background colors
+  #      elements_yml = elements_yml + "    background: \"" + gen_color() + "\"\n"
+  #    end
+  #    i += 4;
+  #  end
+  #  return elements_yml
   end
 end
 
